@@ -127,26 +127,37 @@ const getLatestCases = async () => {
     });
 
     /*
-     * Save the data to the db
+     * Save the data to the db if it does not exist
      */
+
     const document = {
       ...latestArticle,
+      dateAdded: new Date().toISOString(),
     };
 
-    targetValues.forEach(targetValue => {
-      const { name } = targetValue;
-      const value = values[name][0];
-
-      document[name] = value;
-    });
-
-    await firebase
+    const { exists } = await firebase
       .firestore()
       .collection('confirmedCases')
       .doc(document.dateCreated)
-      .set(document);
+      .get();
 
-    console.log(`Added ${document.dateCreated}.`);
+    if (!exists) {
+      targetValues.forEach(targetValue => {
+        const { name } = targetValue;
+        const value = values[name][0];
+
+        document[name] = value;
+      });
+
+      await firebase
+        .firestore()
+        .collection('confirmedCases')
+        .doc(document.dateCreated)
+        .set(document);
+
+      console.log(`Added ${document.dateCreated}.`);
+    }
+    console.log(`No new data.`);
   } catch (error) {
     console.log(error);
   }

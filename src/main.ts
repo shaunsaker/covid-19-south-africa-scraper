@@ -1,6 +1,7 @@
 import * as scrapeIt from 'scrape-it';
 
 import { ArticlesData, LatestCaseData, TargetValues } from './types';
+import firebase from './firebase';
 
 const url = 'https://sacoronavirus.co.za/category/press-releases-and-notices/';
 
@@ -123,23 +124,28 @@ const run = async () => {
           });
         });
       });
-
-      /*
-       * Save the data to the db
-       */
-      const document = {
-        ...latestArticle,
-      };
-
-      targetValues.forEach(targetValue => {
-        const { name } = targetValue;
-        const value = values[name][0];
-
-        document[name] = value;
-      });
-
-      console.log({ document });
     });
+
+    /*
+     * Save the data to the db
+     */
+    const document = {
+      ...latestArticle,
+    };
+
+    targetValues.forEach(targetValue => {
+      const { name } = targetValue;
+      const value = values[name][0];
+
+      document[name] = value;
+    });
+
+    await firebase
+      .firestore()
+      .collection('confirmedCases')
+      .add(document);
+
+    console.log('DONE');
   } catch (error) {
     console.log(error);
   }

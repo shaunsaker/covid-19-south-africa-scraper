@@ -23,21 +23,18 @@ const getArticles = async () => {
 
   /*
    * Select the latest article
-   * Only return the latest confirmed cases articles
    * Sort by latest dateCreated
    */
   const { articles } = data;
-  const cases = articles
-    .filter(article => article.title.includes('Latest confirmed cases'))
-    .sort((a, b) => {
-      if (a.dateCreated > b.dateCreated) {
-        return -1;
-      }
-      if (a.dateCreated < b.dateCreated) {
-        return 1;
-      }
-      return 0;
-    });
+  const cases = articles.sort((a, b) => {
+    if (a.dateCreated > b.dateCreated) {
+      return -1;
+    }
+    if (a.dateCreated < b.dateCreated) {
+      return 1;
+    }
+    return 0;
+  });
 
   return cases;
 };

@@ -24,7 +24,7 @@
   },
   "scripts": {
     "clean": "rimraf coverage build tmp",
-    "postinstall": "npm build",
+    "postinstall": "npm run build && cp ./src/firebase/service-account.json ./build/src/firebase/service-account.json",
     "build": "tsc -p tsconfig.release.json",
     "build:watch": "tsc -w -p tsconfig.release.json",
     "start": "node ./build/src/main.js",

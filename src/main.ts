@@ -143,9 +143,10 @@ const run = async () => {
     await firebase
       .firestore()
       .collection('confirmedCases')
-      .add(document);
+      .doc(document.dateCreated)
+      .set(document);
 
-    console.log('DONE');
+    console.log(`Added ${document.dateCreated}.`);
   } catch (error) {
     console.log(error);
   }

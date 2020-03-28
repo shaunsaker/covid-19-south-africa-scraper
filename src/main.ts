@@ -1,32 +1,148 @@
-/**
- * Some predefined delays (in milliseconds).
- */
-export enum Delays {
-  Short = 500,
-  Medium = 2000,
-  Long = 5000,
-}
+import * as scrapeIt from 'scrape-it';
 
-/**
- * Returns a Promise<string> that resolves after given time.
- *
- * @param {string} name - A name.
- * @param {number=} [delay=Delays.Medium] - Number of milliseconds to delay resolution of the Promise.
- * @returns {Promise<string>}
- */
-function delayedHello(
-  name: string,
-  delay: number = Delays.Medium,
-): Promise<string> {
-  return new Promise((resolve: (value?: string) => void) =>
-    setTimeout(() => resolve(`Hello, ${name}`), delay),
-  );
-}
+import { ArticlesData, LatestCaseData, TargetValues } from './types';
 
-// Below are examples of using ESLint errors suppression
-// Here it is suppressing missing return type definitions for greeter function
+const url = 'https://sacoronavirus.co.za/category/press-releases-and-notices/';
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export async function greeter(name: string) {
-  return await delayedHello(name, Delays.Long);
-}
+const run = async () => {
+  try {
+    /*
+     * Get the articles
+     */
+    const { data }: scrapeIt.ScrapeResult<ArticlesData> = await scrapeIt(url, {
+      articles: {
+        listItem: '#main article',
+        data: {
+          title: '.entry-title a',
+          dateCreated: '.fusion-single-line-meta .rich-snippet-hidden',
+          href: {
+            selector: '.entry-title a',
+            attr: 'href',
+          },
+        },
+      },
+    });
+
+    /*
+     * Select the latest article
+     * Only return the latest confirmed cases articles
+     * Sort by latest dateCreated
+     */
+    const { articles } = data;
+    const casesArticles = articles
+      .filter(article => article.title.includes('Latest confirmed cases'))
+      .sort((a, b) => {
+        if (a.dateCreated > b.dateCreated) {
+          return -1;
+        }
+        if (a.dateCreated < b.dateCreated) {
+          return 1;
+        }
+        return 0;
+      });
+    const latestArticle = casesArticles[0];
+
+    /*
+     * Go to the url of the latest article
+     */
+    const {
+      data: latestCaseData,
+    }: scrapeIt.ScrapeResult<LatestCaseData> = await scrapeIt(
+      latestArticle.href,
+      {
+        paragraphs: {
+          listItem: '.post-content p',
+          data: {
+            text: {
+              selector: 'span',
+              how: 'text',
+            },
+          },
+        },
+      },
+    );
+
+    /*
+     * Get the data using our target values construct
+     */
+    const targetValues: TargetValues = [
+      {
+        name: 'confirmedCases',
+        associations: [
+          {
+            type: 'wordsInSentence',
+            values: ['total', 'number', 'confirmed', 'cases'],
+          },
+          { type: 'valueFollowedBy', values: ['confirmed cases'] },
+        ],
+      },
+    ];
+    const values = {};
+
+    targetValues.forEach(targetValue => {
+      latestCaseData.paragraphs.forEach(({ text }) => {
+        const sentences = text.split('.');
+
+        sentences.forEach(sentence => {
+          /*
+           * Does the sentence have any associations with the targetValue
+           */
+          targetValue.associations.forEach(association => {
+            if (association.type === 'wordsInSentence') {
+              /*
+               * It's a match if the sentence contains all of the values
+               */
+              const isMatch = Boolean(
+                !association.values.filter(word => !sentence.includes(word))
+                  .length,
+              );
+
+              if (isMatch) {
+                /*
+                 * Extract the number from the sentence
+                 */
+                const match = sentence.match(/\d+/);
+                const number = match && Number(match[0]);
+
+                values[targetValue.name] = values[targetValue.name]
+                  ? [...values[targetValue.name], number]
+                  : [number];
+              }
+            } else if (association.type === 'valueFollowedBy') {
+              const regex = new RegExp(`\\d+ ${association.values[0]}`);
+              const match = sentence.match(regex);
+              const number =
+                match && Number(match[0].replace(association.values[0], ''));
+
+              if (number) {
+                values[targetValue.name] = values[targetValue.name]
+                  ? [...values[targetValue.name], number]
+                  : [number];
+              }
+            }
+          });
+        });
+      });
+
+      /*
+       * Save the data to the db
+       */
+      const document = {
+        ...latestArticle,
+      };
+
+      targetValues.forEach(targetValue => {
+        const { name } = targetValue;
+        const value = values[name][0];
+
+        document[name] = value;
+      });
+
+      console.log({ document });
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+run();

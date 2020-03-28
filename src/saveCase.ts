@@ -9,12 +9,11 @@ const saveCase = async (article, articleData) => {
     dateAdded: new Date().toISOString(),
   };
 
-  // const { exists } = await firebase
-  //   .firestore()
-  //   .collection('confirmedCases')
-  //   .doc(document.dateCreated)
-  //   .get();
-  const exists = false; // TODO:
+  const { exists } = await firebase
+    .firestore()
+    .collection('confirmedCases')
+    .doc(document.dateCreated)
+    .get();
 
   if (!exists) {
     Object.keys(articleData).forEach(key => {

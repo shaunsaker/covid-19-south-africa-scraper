@@ -5,6 +5,7 @@
   "engines": {
     "node": ">= 12.13 <13"
   },
+  "main": "build/src/main.js",
   "devDependencies": {
     "@types/jest": "~25.1.2",
     "@types/node": "~12.12.27",
@@ -23,9 +24,11 @@
   },
   "scripts": {
     "clean": "rimraf coverage build tmp",
+    "postinstall": "build",
     "build": "tsc -p tsconfig.release.json",
     "build:watch": "tsc -w -p tsconfig.release.json",
-    "start": "nodemon ./build/src/main.js",
+    "dev": "nodemon ./build/src/main.js",
+    "start": "node ./build/src/main.js",
     "lint": "eslint . --ext .ts,.tsx",
     "test": "jest --coverage",
     "test:watch": "jest --watch"

@@ -1,3 +1,3 @@
-import getLatestCases from './getLatestCases';
+import getLatestCases from './getLatestCase';
 
 getLatestCases();

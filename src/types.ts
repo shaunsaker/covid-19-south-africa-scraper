@@ -12,7 +12,7 @@ interface Paragraph {
   text: string;
 }
 
-export interface LatestCaseData {
+export interface ArticleData {
   paragraphs: Paragraph[];
 }
 

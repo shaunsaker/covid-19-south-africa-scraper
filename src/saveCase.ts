@@ -17,7 +17,7 @@ const saveCase = async (article, articleData) => {
 
   if (!exists) {
     Object.keys(articleData).forEach(key => {
-      const value = articleData[key][0];
+      const value = articleData[key];
 
       document[key] = value;
     });

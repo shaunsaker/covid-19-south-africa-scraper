@@ -1,11 +1,11 @@
 import * as scrapeIt from 'scrape-it';
-import { ArticleData, TargetValues } from './types';
+import { RawArticleData, ArticleData, TargetValues } from './types';
 
-const getArticleData = async href => {
+const getArticleData = async (href): Promise<ArticleData> => {
   /*
    * Get the raw data
    */
-  const { data }: scrapeIt.ScrapeResult<ArticleData> = await scrapeIt(href, {
+  const { data }: scrapeIt.ScrapeResult<RawArticleData> = await scrapeIt(href, {
     paragraphs: {
       listItem: '.post-content p',
       data: {
@@ -50,9 +50,8 @@ const getArticleData = async href => {
               match && Number(match[0].replace(association.values[0], ''));
 
             if (number) {
-              articleData[targetValue.name] = articleData[targetValue.name]
-                ? [...articleData[targetValue.name], number]
-                : [number];
+              articleData[targetValue.name] =
+                articleData[targetValue.name] || number; // keep initial value
             }
           } else if (association.type === 'wordsInSentence') {
             /*
@@ -70,9 +69,8 @@ const getArticleData = async href => {
               const match = sentence.match(/ \d+/);
               const number = match && Number(match[0].trim());
 
-              articleData[targetValue.name] = articleData[targetValue.name]
-                ? [...articleData[targetValue.name], number]
-                : [number];
+              articleData[targetValue.name] =
+                articleData[targetValue.name] || number; // keep initial value
             }
           }
         });

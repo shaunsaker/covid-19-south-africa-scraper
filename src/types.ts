@@ -12,7 +12,7 @@ interface Paragraph {
   text: string;
 }
 
-export interface ArticleData {
+export interface RawArticleData {
   paragraphs: Paragraph[];
 }
 
@@ -23,9 +23,15 @@ interface Association {
   values: string[];
 }
 
+type TargetValueName = 'confirmedCases';
+
 interface TargetValue {
-  name: string;
+  name: TargetValueName;
   associations: Association[];
 }
 
 export type TargetValues = TargetValue[];
+
+export interface ArticleData {
+  [key: string]: number;
+}

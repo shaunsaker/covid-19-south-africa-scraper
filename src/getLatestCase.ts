@@ -2,13 +2,15 @@ import { getArticles } from './getArticles';
 import { getArticleData } from './getArticleData';
 import { saveCase } from './saveCase';
 
-const getLatestCase = async () => {
+const getLatestCase = async (): Promise<void> => {
   try {
     const articles = await getArticles();
     const latestArticle = articles[0];
     const articleData = await getArticleData(latestArticle.href);
 
-    await saveCase(latestArticle, articleData);
+    if (articleData.confirmedCases) {
+      await saveCase(latestArticle, articleData);
+    }
   } catch (error) {
     console.log(error);
   }

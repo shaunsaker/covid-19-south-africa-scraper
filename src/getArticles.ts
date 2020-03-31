@@ -1,5 +1,8 @@
 import * as scrapeIt from 'scrape-it';
+import * as moment from 'moment';
+
 import { ArticlesData } from './types';
+import { sortArrayOfObjectsByKey } from './utils';
 
 const getArticles = async () => {
   /*
@@ -26,17 +29,34 @@ const getArticles = async () => {
    * Sort by latest dateCreated
    */
   const { articles } = data;
-  const cases = articles.sort((a, b) => {
-    if (a.dateCreated > b.dateCreated) {
-      return -1;
-    }
-    if (a.dateCreated < b.dateCreated) {
-      return 1;
-    }
-    return 0;
-  });
+  const sortedArticles = sortArrayOfObjectsByKey(articles, 'dateCreated', true);
 
-  return cases;
+  /*
+   * Convert dateCreated into an iso string
+   */
+  const newArticles = sortedArticles
+    .filter(article => article.dateCreated) // bad data
+    .map(article => {
+      const { dateCreated } = article;
+      const dateParts = dateCreated.split(' ');
+      const dayMatch = dateParts[1].match(/\d*/);
+      const day = dayMatch && Number(dayMatch[0]);
+      const month = dateParts[0];
+      const year = Number(dateParts.reverse()[0]);
+      const dateCreatedISOString = moment(
+        `${day} ${month} ${year}`,
+      ).toISOString();
+
+      return {
+        ...article,
+        dateCreated: dateCreatedISOString,
+      };
+    })
+    .filter(article => article.dateCreated); // bad data
+
+  return newArticles;
 };
+
+getArticles();
 
 export { getArticles };

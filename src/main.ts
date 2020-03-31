@@ -1,3 +1,5 @@
-import getLatestCases from './getLatestCase';
+import { getAllCases } from './getAllCases';
+import { getProvincialData } from './getProvincialData';
 
-getLatestCases();
+getAllCases();
+getProvincialData();

@@ -1,6 +1,6 @@
 import { getArticles } from './getArticles';
 import { getArticleData } from './getArticleData';
-import { saveCase } from './saveCase';
+import { saveConfirmedCase } from './saveConfirmedCase';
 
 const getAllCases = async (): Promise<void> => {
   try {
@@ -8,9 +8,14 @@ const getAllCases = async (): Promise<void> => {
 
     for (const article of articles) {
       const articleData = await getArticleData(article.href);
+      const document = {
+        ...article,
+        ...articleData,
+        dateAdded: new Date().toISOString(),
+      };
 
       if (articleData.confirmedCases) {
-        await saveCase(article, articleData);
+        await saveConfirmedCase(document);
       }
     }
   } catch (error) {
@@ -19,3 +24,5 @@ const getAllCases = async (): Promise<void> => {
 };
 
 getAllCases();
+
+export { getAllCases };

@@ -1,5 +1,10 @@
+export interface ConfirmedCase extends Article {
+  confirmedCases: number;
+  dateAdded: string;
+}
+
 interface Article {
-  title: string;
+  title?: string;
   dateCreated: string;
   href: string;
 }
@@ -34,4 +39,9 @@ export type TargetValues = TargetValue[];
 
 export interface ArticleData {
   [key: string]: number;
+}
+
+export interface ProvincialCase {
+  total: string;
+  YYYYMMDD: string;
 }

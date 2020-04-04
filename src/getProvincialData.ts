@@ -7,6 +7,7 @@ import { saveConfirmedCase } from './saveConfirmedCase';
 
 const url =
   'https://raw.githubusercontent.com/dsfsi/covid19za/master/data/covid19za_provincial_cumulative_timeline_confirmed.csv';
+const source = 'https://github.com/dsfsi/covid19za';
 
 const getProvincialData = async () => {
   const { data } = await axios.get(url);
@@ -24,7 +25,7 @@ const getProvincialData = async () => {
     return {
       confirmedCases: item.total && Number(item.total),
       dateCreated: moment(item.YYYYMMDD).toISOString(),
-      href: url,
+      href: source,
       dateAdded: new Date().toISOString(),
     };
   });

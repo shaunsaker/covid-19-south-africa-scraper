@@ -43,5 +43,19 @@ export interface ArticleData {
 
 export interface ProvincialCase {
   total: string;
+  date: string;
   YYYYMMDD: string;
+}
+
+export interface DeathData {
+  report_id: string;
+  date: string;
+  YYYYMMDD: string;
+}
+
+export interface DeathCase {
+  deaths: number;
+  dateCreated: string;
+  href: string;
+  dateAdded: string;
 }

@@ -1,14 +1,14 @@
 import firebase from './firebase';
 import * as moment from 'moment';
 
-import { ConfirmedCase } from './types';
+import { DeathCase } from './types';
 
-const collection = 'confirmedCases';
+const collection = 'deathCases';
 
 /*
  * Saves the document if it does not already exist at that id
  */
-const saveConfirmedCase = async (document: ConfirmedCase) => {
+const saveDeathCase = async (document: DeathCase) => {
   const id = moment(document.dateCreated).format('DD-MM-YYYY');
 
   const { exists } = await firebase
@@ -30,4 +30,4 @@ const saveConfirmedCase = async (document: ConfirmedCase) => {
   }
 };
 
-export { saveConfirmedCase };
+export { saveDeathCase };

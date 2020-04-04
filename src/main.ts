@@ -1,6 +1,6 @@
 import { getAllCases } from './getAllCases';
 import { getProvincialData } from './getProvincialData';
-import { getDeathsData } from './getDeathsDAta';
+import { getDeathsData } from './getDeathsData';
 
 getAllCases();
 getProvincialData();

@@ -14,7 +14,7 @@ const getDeathsData = async () => {
   const json: DeathData[] = csvToJson(data);
 
   /*
-   * Group by day and tally the death counts
+   * Group by day
    */
   const groupedJson = {};
 
@@ -29,9 +29,11 @@ const getDeathsData = async () => {
   /*
    * Convert the grouped json into what we need
    */
+  let deaths = 0;
   const deathCases: DeathCase[] = Object.keys(groupedJson).map(key => {
     const array = groupedJson[key];
-    const deaths = array.length;
+    const newDeaths = array.length;
+    deaths += newDeaths;
 
     return {
       deaths,

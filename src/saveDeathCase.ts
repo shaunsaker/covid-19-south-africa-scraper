@@ -6,28 +6,30 @@ import { DeathCase } from './types';
 const collection = 'deathCases';
 
 /*
- * Saves the document if it does not already exist at that id
+ * Saves the document if that number of confirmedCases has not yet been saved
  */
 const saveDeathCase = async (document: DeathCase) => {
   const id = moment(document.dateCreated).format('DD-MM-YYYY');
+  const { deaths } = document;
 
-  const { exists } = await firebase
+  firebase
     .firestore()
     .collection(collection)
-    .doc(id)
-    .get();
+    .where('deaths', '==', deaths)
+    .get()
+    .then(async snapshot => {
+      if (snapshot.empty) {
+        await firebase
+          .firestore()
+          .collection(collection)
+          .doc(id)
+          .set(document);
 
-  if (!exists) {
-    await firebase
-      .firestore()
-      .collection(collection)
-      .doc(id)
-      .set(document);
-
-    console.log(`Added ${id}.`);
-  } else {
-    console.log(`No new data.`);
-  }
+        console.log(`Added death cases of ${deaths} in ${id}.`);
+      } else {
+        console.log(`Death cases of ${deaths} already exists in ${id}.`);
+      }
+    });
 };
 
 export { saveDeathCase };

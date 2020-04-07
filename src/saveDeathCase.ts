@@ -19,13 +19,28 @@ const saveDeathCase = async (document: DeathCase) => {
     .get()
     .then(async snapshot => {
       if (snapshot.empty) {
-        await firebase
+        /*
+         * And a document doesn't already exist
+         */
+        const { exists } = await firebase
           .firestore()
           .collection(collection)
           .doc(id)
-          .set(document);
+          .get();
 
-        console.log(`Added death cases of ${deaths} in ${id}.`);
+        if (!exists) {
+          await firebase
+            .firestore()
+            .collection(collection)
+            .doc(id)
+            .set(document);
+
+          console.log(`Added death cases of ${deaths} in ${id}.`);
+        } else {
+          console.log(
+            `Death cases already exists at ${id}. We tried to save ${deaths}.`,
+          );
+        }
       } else {
         console.log(`Death cases of ${deaths} already exists in ${id}.`);
       }

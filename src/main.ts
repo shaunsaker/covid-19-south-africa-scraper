@@ -1,7 +1,7 @@
 import { getAllCases } from './getAllCases';
 import { getProvincialData } from './getProvincialData';
-import { getDeathsData } from './getDeathsData';
+import { getRecoveriesTestsAndDeathsData } from './getRecoveriesTestsAndDeathsData';
 
 getAllCases();
 getProvincialData();
-getDeathsData();
+getRecoveriesTestsAndDeathsData();

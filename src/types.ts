@@ -1,6 +1,11 @@
-export interface ConfirmedCase extends Article {
-  confirmedCases: number;
+interface BaseCase {
+  dateCreated: string;
+  href: string;
   dateAdded: string;
+}
+
+export interface ConfirmedCase extends BaseCase {
+  confirmedCases: number;
 }
 
 interface Article {
@@ -53,9 +58,22 @@ export interface DeathData {
   YYYYMMDD: string;
 }
 
-export interface DeathCase {
+export interface DeathCase extends BaseCase {
   deaths: number;
-  dateCreated: string;
-  href: string;
-  dateAdded: string;
+}
+
+export interface TestData {
+  date: string;
+  YYYYMMDD: string;
+  cumulative_tests: string;
+  recovered: string;
+  deaths: string;
+}
+
+export interface RecoveredCase extends BaseCase {
+  recovered: number;
+}
+
+export interface TestCase extends BaseCase {
+  tests: number;
 }

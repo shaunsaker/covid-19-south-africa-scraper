@@ -1,21 +1,21 @@
 import firebase from './firebase';
 import * as moment from 'moment';
 
-import { DeathCase } from './types';
+import { TestCase } from './types';
 
-const collection = 'deathCases';
+const collection = 'testCases';
 
 /*
- * Saves the document if that number of deaths has not yet been saved
+ * Saves the document if that number of tests has not yet been saved
  */
-const saveDeathCase = async (document: DeathCase) => {
+const saveTestCase = async (document: TestCase) => {
   const id = moment(document.dateCreated).format('DD-MM-YYYY');
-  const { deaths } = document;
+  const { tests } = document;
 
   firebase
     .firestore()
     .collection(collection)
-    .where('deaths', '==', deaths)
+    .where('tests', '==', tests)
     .get()
     .then(async snapshot => {
       if (snapshot.empty) {
@@ -35,16 +35,16 @@ const saveDeathCase = async (document: DeathCase) => {
             .doc(id)
             .set(document);
 
-          console.log(`Added death cases of ${deaths} in ${id}.`);
+          console.log(`Added test cases of ${tests} in ${id}.`);
         } else {
           console.log(
-            `Death cases already exists at ${id}. We tried to save ${deaths}.`,
+            `Test cases already exists at ${id}. We tried to save ${tests}.`,
           );
         }
       } else {
-        console.log(`Death cases of ${deaths} already exists in ${id}.`);
+        console.log(`Test cases of ${tests} already exists in ${id}.`);
       }
     });
 };
 
-export { saveDeathCase };
+export { saveTestCase };

@@ -9,6 +9,9 @@ const url =
   'https://raw.githubusercontent.com/dsfsi/covid19za/master/data/covid19za_timeline_deaths.csv';
 const source = 'https://github.com/dsfsi/covid19za';
 
+/*
+ * NOTE: Unused - now using getRecoveriesTestsAndDeathsData
+ */
 const getDeathsData = async () => {
   const { data } = await axios.get(url);
   const json: DeathData[] = csvToJson(data);

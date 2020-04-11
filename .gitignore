@@ -31,3 +31,4 @@ build/
 # Private
 tools
 service-account.json
+.git.bfg-report

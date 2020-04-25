@@ -64,10 +64,16 @@ const getArticleData = async (href): Promise<ArticleData> => {
 
             if (isMatch) {
               /*
-               * Extract the number from the sentence
+               * Extract the number(s) from the sentence
                */
-              const match = sentence.match(/ \d+/);
-              const number = match && Number(match[0].trim());
+              const match = sentence.match(/[^a-z ] *([.0-9])*\d/g);
+              const numbers = match.map(item => {
+                const noBlankSpaces = item.split(' ').join('');
+                const number = Number(noBlankSpaces);
+
+                return number;
+              });
+              const number = match && Math.max(...numbers); // take the largest matched number
 
               articleData[targetValue.name] =
                 articleData[targetValue.name] || number; // keep initial value
@@ -80,5 +86,9 @@ const getArticleData = async (href): Promise<ArticleData> => {
 
   return articleData;
 };
+
+getArticleData(
+  'https://sacoronavirus.co.za/2020/04/24/update-on-covid-19-24th-april-2020/',
+);
 
 export { getArticleData };

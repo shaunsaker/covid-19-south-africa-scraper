@@ -66,7 +66,7 @@ const getArticleData = async (href): Promise<ArticleData> => {
               /*
                * Extract the number(s) from the sentence
                */
-              const match = sentence.match(/[^a-z ] *([.0-9])*\d/g);
+              const match = sentence.match(/([^a-z- ] *([.0-9]))*\d/g);
               const numbers = match.map(item => {
                 const noBlankSpaces = item.split(' ').join('');
                 const number = Number(noBlankSpaces);

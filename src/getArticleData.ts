@@ -66,7 +66,10 @@ const getArticleData = async (href): Promise<ArticleData> => {
               /*
                * Extract the number(s) from the sentence
                */
-              const match = sentence.match(/([^a-z- ] *([.0-9]))*\d/g);
+              const match = sentence.match(
+                /(?:\d+)((\d{1,3})*([\,\ ]\d{3})*)(\.\d+)?/g,
+              );
+
               const numbers = match.map(item => {
                 const noBlankSpaces = item.split(' ').join('');
                 const number = Number(noBlankSpaces);
@@ -88,7 +91,7 @@ const getArticleData = async (href): Promise<ArticleData> => {
 };
 
 getArticleData(
-  'https://sacoronavirus.co.za/2020/04/24/update-on-covid-19-24th-april-2020/',
+  'https://sacoronavirus.co.za/2020/05/19/update-on-covid-19-19th-may-2020/',
 );
 
 export { getArticleData };

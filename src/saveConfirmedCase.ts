@@ -10,43 +10,26 @@ const saveConfirmedCase = async (document: ConfirmedCase) => {
   const { confirmedCases } = document;
 
   /*
-   * Saves the document if that number of confirmedCases has not yet been saved
+   * Don't save if the confirmedCases are lower than the latest (can happen when incorrect numbers are extracted from the articles) or if they are the same
    */
-  firebase
+  const hasGreaterConfirmedCases = !(
+    await firebase
+      .firestore()
+      .collection(collection)
+      .where('confirmedCases', '>=', confirmedCases)
+      .get()
+  ).empty;
+
+  if (hasGreaterConfirmedCases) {
+    console.log(`Confirmed cases of ${confirmedCases} already exists.`);
+    return;
+  }
+
+  await firebase
     .firestore()
     .collection(collection)
-    .where('confirmedCases', '==', confirmedCases)
-    .get()
-    .then(async snapshot => {
-      if (snapshot.empty) {
-        /*
-         * And a document doesn't already exist
-         */
-        const { exists } = await firebase
-          .firestore()
-          .collection(collection)
-          .doc(id)
-          .get();
-
-        if (!exists) {
-          await firebase
-            .firestore()
-            .collection(collection)
-            .doc(id)
-            .set(document);
-
-          console.log(`Added confirmed cases of ${confirmedCases} in ${id}.`);
-        } else {
-          console.log(
-            `Confirmed cases already exist at ${id}. We tried to save ${confirmedCases}.`,
-          );
-        }
-      } else {
-        console.log(
-          `Confirmed cases of ${confirmedCases} already exists in ${id}.`,
-        );
-      }
-    });
+    .doc(id)
+    .set(document);
 };
 
 export { saveConfirmedCase };
